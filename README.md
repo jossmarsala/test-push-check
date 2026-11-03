@@ -7,7 +7,27 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## React Compiler
+## Git Branching Strategy
+
+This repository uses a lightweight Git branching workflow:
+
+- `main`: Production-ready code.
+- `develop`: Integration branch where features and fixes are merged.
+- `feature/<name>`: New functionality (branched from and merged into `develop`).
+  - Example: `git checkout -b feature/user-profile develop`
+- `fix/<name>`: Bug fixes (branched from `develop` and merged into `develop`).
+  - Example: `git checkout -b fix/login-redirect develop`
+
+```
+main ───────●──────────────────────● (production releases)
+             \                    /
+develop ──────●────────●─────────●   (integration)
+               \      / \       /
+feature/xxx ────●────●   \     /     (new features)
+                          \   /
+fix/xxx ───────────────────●─●       (bug fixes)
+```
+
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
