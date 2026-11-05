@@ -108,9 +108,6 @@ export const NotificationsDrawer: React.FC = () => {
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-[var(--neutral-muted)] mt-0.5">
-                Alertas operativas del sistema
-              </p>
             </div>
           </div>
 
@@ -212,22 +209,8 @@ export const NotificationsDrawer: React.FC = () => {
             ))
           )}
         </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] flex items-center justify-between text-xs text-[var(--neutral-muted)] select-none">
-          <span>{notifications.length} alertas en total</span>
-          <button
-            type="button"
-            onClick={() => {
-              closeNotifications()
-              navigate('/dashboard')
-            }}
-            className="font-medium text-[var(--neutral-emphasis)] hover:underline cursor-pointer"
-          >
-            Ver resumen completo
-          </button>
-        </div>
       </aside>
     </>
   )
 }
+
