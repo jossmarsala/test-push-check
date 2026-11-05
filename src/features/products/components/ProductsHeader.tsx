@@ -45,7 +45,6 @@ export const ProductsHeader: React.FC<ProductsHeaderProps> = ({
         />
       )}
       <NotificationBellButton
-        hasUnread={false}
         onClick={onNotificationsClick}
       />
     </PageHeader>

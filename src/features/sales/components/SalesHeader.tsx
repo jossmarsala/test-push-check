@@ -29,12 +29,10 @@ export const SalesHeader: React.FC<SalesHeaderProps> = ({
         />
       )}
 
-      {onNotificationsClick && (
-        <NotificationBellButton
-          onClick={onNotificationsClick}
-          label="Ver notificaciones de ventas"
-        />
-      )}
+      <NotificationBellButton
+        onClick={onNotificationsClick}
+        label="Ver notificaciones de ventas"
+      />
     </PageHeader>
   )
 }

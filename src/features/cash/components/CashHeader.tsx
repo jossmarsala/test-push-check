@@ -40,12 +40,10 @@ export const CashHeader: React.FC<CashHeaderProps> = ({
         />
       )}
 
-      {onNotificationsClick && (
-        <NotificationBellButton
-          onClick={onNotificationsClick}
-          label="Notificaciones de caja"
-        />
-      )}
+      <NotificationBellButton
+        onClick={onNotificationsClick}
+        label="Notificaciones de caja"
+      />
     </PageHeader>
   )
 }

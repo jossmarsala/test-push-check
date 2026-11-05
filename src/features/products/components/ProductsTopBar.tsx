@@ -56,12 +56,10 @@ export const ProductsTopBar: React.FC<ProductsTopBarProps> = ({
         </button>
 
         {/* Notification Bell Button */}
-        {onNotificationsClick && (
-          <NotificationBellButton
-            onClick={onNotificationsClick}
-            label="Notificaciones de productos"
-          />
-        )}
+        <NotificationBellButton
+          onClick={onNotificationsClick}
+          label="Notificaciones de productos"
+        />
       </div>
     </div>
   );

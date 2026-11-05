@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { PlusCircle } from "lucide-react";
 import {
   PageHeader,
@@ -15,8 +15,6 @@ export const PedidosHeader: React.FC<PedidosHeaderProps> = ({
   onRegisterNewClick,
   onNotificationsClick,
 }) => {
-  const [hasUnread] = useState(true);
-
   return (
     <PageHeader title="Pedidos">
       <HeaderActionButton
@@ -27,13 +25,10 @@ export const PedidosHeader: React.FC<PedidosHeaderProps> = ({
         variant="primary"
       />
 
-      {onNotificationsClick && (
-        <NotificationBellButton
-          onClick={onNotificationsClick}
-          hasUnread={hasUnread}
-          label="Notificaciones de pedidos"
-        />
-      )}
+      <NotificationBellButton
+        onClick={onNotificationsClick}
+        label="Notificaciones de pedidos"
+      />
     </PageHeader>
   );
 };

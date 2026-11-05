@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   PageHeader,
   NotificationBellButton,
@@ -15,13 +15,10 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   subtitle,
   onNotificationsClick,
 }) => {
-  const [hasUnread] = useState(true)
-
   return (
     <PageHeader title={title} subtitle={subtitle}>
       <NotificationBellButton
         onClick={onNotificationsClick}
-        hasUnread={hasUnread}
       />
     </PageHeader>
   )

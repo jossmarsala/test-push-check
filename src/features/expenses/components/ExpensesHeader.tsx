@@ -27,12 +27,10 @@ export const ExpensesHeader: React.FC<ExpensesHeaderProps> = ({
         />
       )}
 
-      {onNotificationsClick && (
-        <NotificationBellButton
-          onClick={onNotificationsClick}
-          label="Notificaciones de gastos"
-        />
-      )}
+      <NotificationBellButton
+        onClick={onNotificationsClick}
+        label="Notificaciones de gastos"
+      />
     </PageHeader>
   );
 };

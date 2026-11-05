@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Menu, X } from '@animateicons/react/lucide'
 import { Sidebar } from '@/components/navigation/Sidebar'
+import { NotificationsDrawer } from '@/components/notifications/NotificationsDrawer'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 
@@ -126,6 +127,9 @@ export const AdminLayout: React.FC = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Global Notifications Slide-over Drawer */}
+      <NotificationsDrawer />
     </div>
   )
 }

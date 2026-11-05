@@ -21,10 +21,6 @@ export const DashboardPage: React.FC = () => {
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
   const [isNewExpenseOpen, setIsNewExpenseOpen] = useState(false);
 
-  const handleNotifications = () => {
-    showToast("Tienes 2 notificaciones nuevas de taller y caja.");
-  };
-
   const handleCreateSale = (formData: NewSaleFormData) => {
     const rawTotal = formData.items.reduce(
       (sum, item) => sum + item.unitPrice * item.quantity,
@@ -57,7 +53,6 @@ export const DashboardPage: React.FC = () => {
       {/* Top Header Row with Title and Quick Actions */}
       <DashboardHeader
         title="Resumen"
-        onNotificationsClick={handleNotifications}
       />
 
       {/* Speed Dial / Quick Actions */}
