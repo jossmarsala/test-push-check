@@ -1,10 +1,11 @@
-import React from 'react'
-import { BrowserRouter } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthProvider } from '@/context/AuthContext'
-import { ToastProvider } from '@/context/ToastContext'
-import { NotificationsProvider } from '@/context/NotificationsContext'
-import { AppRoutes } from '@/routes/AppRoutes'
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
+import { NotificationsProvider } from "@/context/NotificationsContext";
+import { SalesProvider } from "@/context/SalesContext";
+import { AppRoutes } from "@/routes/AppRoutes";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,7 +15,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
-})
+});
 
 export const App: React.FC = () => {
   return (
@@ -23,13 +24,15 @@ export const App: React.FC = () => {
         <AuthProvider>
           <ToastProvider>
             <NotificationsProvider>
-              <AppRoutes />
+              <SalesProvider>
+                <AppRoutes />
+              </SalesProvider>
             </NotificationsProvider>
           </ToastProvider>
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
-  )
-}
+  );
+};
 
-export default App
+export default App;
