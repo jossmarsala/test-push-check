@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useToast } from "@/context/ToastContext";
+import { useSales } from "@/context/SalesContext";
 import { DashboardHeader } from "../components/DashboardHeader";
 import { DashboardQuickActions } from "../components/DashboardQuickActions";
 import { DashboardAlertsBlock } from "../components/DashboardAlertsBlock";
@@ -16,22 +17,16 @@ import type { NewExpenseFormData } from "@/features/expenses/types/expenses.type
 
 export const DashboardPage: React.FC = () => {
   const { showToast } = useToast();
+  const { sales, createSale } = useSales();
 
   const [isNewSaleOpen, setIsNewSaleOpen] = useState(false);
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
   const [isNewExpenseOpen, setIsNewExpenseOpen] = useState(false);
 
   const handleCreateSale = (formData: NewSaleFormData) => {
-    const rawTotal = formData.items.reduce(
-      (sum, item) => sum + item.unitPrice * item.quantity,
-      0
-    );
-    const discountAmount = formData.discountPercent
-      ? Math.round((rawTotal * formData.discountPercent) / 100)
-      : 0;
-    const totalAmount = Math.max(0, rawTotal - discountAmount);
+    const newSale = createSale(formData);
     showToast(
-      `Venta registrada con éxito por $${totalAmount.toLocaleString("es-AR")}.`
+      `Venta registrada con éxito por $${newSale.total.toLocaleString("es-AR")}.`,
     );
     setIsNewSaleOpen(false);
   };
@@ -43,17 +38,15 @@ export const DashboardPage: React.FC = () => {
 
   const handleCreateExpense = (formData: NewExpenseFormData) => {
     showToast(
-      `Gasto de $${formData.monto.toLocaleString("es-AR")} registrado con éxito.`
+      `Gasto de $${formData.monto.toLocaleString("es-AR")} registrado con éxito.`,
     );
     setIsNewExpenseOpen(false);
   };
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto space-y-6 animate-fade-in">
+    <div className="w-full max-w-[1200px] mx-auto space-y-4 sm:space-y-4.5 animate-fade-in">
       {/* Top Header Row with Title and Quick Actions */}
-      <DashboardHeader
-        title="Resumen"
-      />
+      <DashboardHeader title="Resumen" />
 
       {/* Speed Dial / Quick Actions */}
       <DashboardQuickActions
@@ -66,16 +59,16 @@ export const DashboardPage: React.FC = () => {
       <DashboardAlertsBlock />
 
       {/* Main 2-Column Responsive Operations Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
-        {/* Left Column: Pedidos en taller & Flujo de caja */}
-        <div className="flex flex-col space-y-6 sm:space-y-8">
-          <PendingOrdersCard />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-4.5 items-stretch">
+        {/* Left Column: Ventas de hoy & Flujo de caja */}
+        <div className="flex flex-col gap-4 sm:gap-4.5 h-full">
+          <RecentSalesCard sales={sales} maxItems={4} className="flex-1 min-h-0" />
           <CashFlowCard />
         </div>
 
-        {/* Right Column: Ventas recientes & Control de caja */}
-        <div className="flex flex-col space-y-6 sm:space-y-8">
-          <RecentSalesCard />
+        {/* Right Column: Pedidos en taller & Control de caja */}
+        <div className="flex flex-col gap-4 sm:gap-4.5 h-full">
+          <PendingOrdersCard className="flex-1 min-h-0" />
           <CashRegisterCard />
         </div>
       </div>

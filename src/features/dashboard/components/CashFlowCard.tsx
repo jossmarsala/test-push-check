@@ -10,25 +10,27 @@ const DEFAULT_CASH_FLOW: CashFlowData = {
 
 interface CashFlowCardProps {
   data?: CashFlowData
+  className?: string
 }
 
 export const CashFlowCard: React.FC<CashFlowCardProps> = ({
   data = DEFAULT_CASH_FLOW,
+  className = '',
 }) => {
   const formatCurrency = (val: number) => {
     return val.toLocaleString('es-AR')
   }
 
   return (
-    <section className="space-y-3">
+    <section className={`space-y-2 sm:space-y-2.5 flex flex-col ${className}`}>
       {/* Section Title */}
-      <h2 className="text-base sm:text-lg font-semibold tracking-tight text-[var(--neutral-emphasis)] leading-snug select-none">
+      <h2 className="text-sm sm:text-base font-semibold tracking-tight text-[var(--neutral-emphasis)] leading-snug select-none">
         Flujo de caja de hoy
       </h2>
 
       {/* Card Container */}
-      <div className="flex flex-col justify-between rounded-[var(--radius-card)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] p-5 shadow-2xs transition-all">
-        {/* Top Header Row with Total label (Dollar icon removed) */}
+      <div className="flex flex-col justify-between rounded-[var(--radius-card)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] p-4 sm:p-5 shadow-2xs transition-all flex-1 min-h-[130px]">
+        {/* Top Header Row with Total label */}
         <div className="flex items-center justify-between">
           <h4 className="text-xs font-medium text-[var(--neutral-muted)] select-none">
             Balance neto del día

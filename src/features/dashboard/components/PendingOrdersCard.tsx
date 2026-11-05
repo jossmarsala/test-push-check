@@ -47,10 +47,6 @@ const MOCK_PENDING_ORDERS: DashboardOrder[] = [
     pesoInicialGramos: 4.8,
     mermaEstimadaGramos: 0.15,
     pesoFinalGramos: 4.65,
-    imageUrl: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&auto=format&fit=crop&q=80',
-    imagenes: [
-      'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&auto=format&fit=crop&q=80',
-    ],
     pagos: [
       {
         id: 'p-1',
@@ -84,10 +80,6 @@ const MOCK_PENDING_ORDERS: DashboardOrder[] = [
     pesoInicialGramos: 14.2,
     mermaEstimadaGramos: 0.4,
     pesoFinalGramos: 13.8,
-    imageUrl: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=80',
-    imagenes: [
-      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=80',
-    ],
     pagos: [
       {
         id: 'p-2',
@@ -121,10 +113,6 @@ const MOCK_PENDING_ORDERS: DashboardOrder[] = [
     pesoInicialGramos: 8.5,
     mermaEstimadaGramos: 0.02,
     pesoFinalGramos: 8.48,
-    imageUrl: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&auto=format&fit=crop&q=80',
-    imagenes: [
-      'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&auto=format&fit=crop&q=80',
-    ],
     pagos: [
       {
         id: 'p-3',
@@ -139,11 +127,13 @@ const MOCK_PENDING_ORDERS: DashboardOrder[] = [
 interface PendingOrdersCardProps {
   orders?: DashboardOrder[]
   onViewDetail?: (order: Pedido) => void
+  className?: string
 }
 
 export const PendingOrdersCard: React.FC<PendingOrdersCardProps> = ({
   orders = MOCK_PENDING_ORDERS,
   onViewDetail,
+  className = '',
 }) => {
   const { showToast } = useToast()
   const [localOrders, setLocalOrders] = useState<DashboardOrder[]>(orders)
@@ -287,10 +277,10 @@ export const PendingOrdersCard: React.FC<PendingOrdersCardProps> = ({
   const daysRemaining = currentOrder?.daysRemaining ?? 0
 
   return (
-    <section className="space-y-3">
+    <section className={`space-y-2 sm:space-y-2.5 flex flex-col ${className}`}>
       {/* Section Header with Link */}
       <div className="flex items-center justify-between select-none">
-        <h2 className="text-base sm:text-lg font-semibold tracking-tight text-[var(--neutral-emphasis)] leading-snug">
+        <h2 className="text-sm sm:text-base font-semibold tracking-tight text-[var(--neutral-emphasis)] leading-snug">
           Pedidos en taller
         </h2>
         <Link
@@ -303,17 +293,17 @@ export const PendingOrdersCard: React.FC<PendingOrdersCardProps> = ({
       </div>
 
       {/* Card Container */}
-      <div className="relative flex flex-col justify-between rounded-[var(--radius-card)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] p-5 shadow-2xs transition-all">
+      <div className="relative flex flex-col justify-between rounded-[var(--radius-card)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] p-4 sm:p-5 shadow-2xs transition-all flex-1">
         {/* Pagination Counter Top-Right */}
-        <div className="absolute top-5 right-5 text-xs font-mono tabular-nums text-[var(--neutral-muted)] select-none">
+        <div className="absolute top-4 right-4 text-xs font-mono tabular-nums text-[var(--neutral-muted)] select-none">
           {currentIndex + 1} / {total}
         </div>
 
         {/* Order Details Body */}
-        <div className="flex items-start gap-4 pr-12">
+        <div className="flex items-start gap-3.5 pr-12">
           {/* Order Image Thumbnail */}
           <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--radius-input)] bg-[var(--neutral-subtle)] text-[var(--neutral-placeholder)] overflow-hidden border border-[var(--neutral-border-subtle)] select-none"
+            className="flex h-13 w-13 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-[var(--radius-input)] bg-[var(--neutral-subtle)] text-[var(--neutral-placeholder)] overflow-hidden border border-[var(--neutral-border-subtle)] select-none"
             aria-label="Foto del pedido"
           >
             {displayImage ? (
@@ -329,7 +319,7 @@ export const PendingOrdersCard: React.FC<PendingOrdersCardProps> = ({
 
           {/* Text Metadata */}
           <div className="flex flex-col space-y-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-semibold text-[var(--neutral-emphasis)] text-sm leading-tight">
                 Pedido <span className="font-mono tabular-nums">{displayCode}</span>
               </h3>
@@ -343,7 +333,7 @@ export const PendingOrdersCard: React.FC<PendingOrdersCardProps> = ({
                 </span>
               ) : null}
             </div>
-            <p className="text-xs text-[var(--neutral-muted)] leading-normal">
+            <p className="text-xs text-[var(--neutral-muted)] leading-tight">
               Recepción: <span className="font-mono tabular-nums">{displayStartDate}</span>
             </p>
             <div className="flex flex-wrap items-center gap-2 pt-0.5">
@@ -358,12 +348,12 @@ export const PendingOrdersCard: React.FC<PendingOrdersCardProps> = ({
         </div>
 
         {/* Bottom Actions Row: Single "Ver detalle" + Carousel Navigation */}
-        <div className="mt-5 flex items-center gap-2 pt-1">
+        <div className="mt-4 flex items-center gap-2 pt-1">
           {/* Single "Ver detalle" Action Button */}
           <button
             type="button"
             onClick={handleOpenDetail}
-            className="flex h-9 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] text-[var(--neutral-body)] hover:text-[var(--neutral-emphasis)] hover:bg-[var(--neutral-subtle)] px-4 text-xs font-medium transition-colors cursor-pointer select-none active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--sidebar-ring)]"
+            className="flex h-8.5 sm:h-9 flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-btn)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] text-[var(--neutral-body)] hover:text-[var(--neutral-emphasis)] hover:bg-[var(--neutral-subtle)] px-4 text-xs font-medium transition-colors cursor-pointer select-none active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--sidebar-ring)]"
           >
             <Eye className="h-3.5 w-3.5 stroke-[1.5]" />
             <span>Ver detalle</span>
@@ -374,7 +364,7 @@ export const PendingOrdersCard: React.FC<PendingOrdersCardProps> = ({
             type="button"
             onClick={handlePrev}
             aria-label="Pedido anterior"
-            className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] text-[var(--neutral-muted)] hover:text-[var(--neutral-emphasis)] hover:bg-[var(--neutral-subtle)] active:scale-[0.98] transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--sidebar-ring)]"
+            className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] text-[var(--neutral-muted)] hover:text-[var(--neutral-emphasis)] hover:bg-[var(--neutral-subtle)] active:scale-[0.98] transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--sidebar-ring)]"
           >
             <ChevronLeft className="h-3.5 w-3.5 stroke-[1.5]" />
           </button>
@@ -384,7 +374,7 @@ export const PendingOrdersCard: React.FC<PendingOrdersCardProps> = ({
             type="button"
             onClick={handleNext}
             aria-label="Siguiente pedido"
-            className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] text-[var(--neutral-muted)] hover:text-[var(--neutral-emphasis)] hover:bg-[var(--neutral-subtle)] active:scale-[0.98] transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--sidebar-ring)]"
+            className="flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] text-[var(--neutral-muted)] hover:text-[var(--neutral-emphasis)] hover:bg-[var(--neutral-subtle)] active:scale-[0.98] transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--sidebar-ring)]"
           >
             <ChevronRight className="h-3.5 w-3.5 stroke-[1.5]" />
           </button>

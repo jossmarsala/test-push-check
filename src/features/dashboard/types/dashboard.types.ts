@@ -20,13 +20,19 @@ export interface PendingOrder {
   pesoFinalGramos?: number
 }
 
-export type PaymentMethod = 'Efectivo' | 'Tarjeta' | 'Transferencia'
+export type PaymentMethod =
+  | 'Efectivo'
+  | 'Tarjeta'
+  | 'Transferencia'
+  | 'Mercado Pago'
+  | 'Dividido'
 
 export interface RecentSaleItem {
   id: string
   customerName: string
   time: string
   paymentMethod: PaymentMethod
+  total?: number
 }
 
 export interface CashFlowData {

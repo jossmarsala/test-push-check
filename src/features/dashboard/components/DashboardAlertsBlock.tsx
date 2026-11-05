@@ -34,50 +34,48 @@ export const DashboardAlertsBlock: React.FC = () => {
   const navigate = useNavigate()
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-2 sm:space-y-2.5">
       {/* Block Header */}
       <div className="flex items-center justify-between select-none">
-        <h2 className="text-base sm:text-lg font-semibold tracking-tight text-[var(--neutral-emphasis)] leading-snug">
+        <h2 className="text-sm sm:text-base font-semibold tracking-tight text-[var(--neutral-emphasis)] leading-snug">
           Alertas
         </h2>
       </div>
 
       {/* Alerts Grid / Container */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-3.5">
         {ALERTS.map((alert) => (
           <div
             key={alert.id}
             onClick={() => navigate(alert.link)}
-            className="group relative flex flex-col justify-between p-5 sm:p-6 min-h-[150px] rounded-[var(--radius-card)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] hover:border-[var(--neutral-border)] hover:bg-[var(--neutral-subtle)]/50 transition-all cursor-pointer select-none shadow-2xs"
+            className="group relative flex flex-col justify-between p-3.5 sm:p-4 rounded-[var(--radius-card)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] hover:border-[var(--neutral-border)] hover:bg-[var(--neutral-subtle)]/50 transition-all cursor-pointer select-none shadow-2xs"
           >
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--neutral-emphasis)] opacity-70" />
-                <span className="text-[11px] font-medium text-[var(--neutral-muted)]">
-                  {alert.tag}
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--neutral-emphasis)] opacity-70" />
+                  <span className="text-[10px] font-medium text-[var(--neutral-muted)]">
+                    {alert.tag}
+                  </span>
+                </div>
+                <span className="inline-flex items-center gap-0.5 text-xs font-medium text-[var(--neutral-muted)] group-hover:text-[var(--neutral-emphasis)] group-hover:translate-x-0.5 transition-all">
+                  <span>Ir</span>
+                  <ChevronRight className="h-3 w-3 stroke-[1.5]" />
                 </span>
               </div>
-              <div className="flex items-start gap-3.5 sm:gap-4">
-                <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-[var(--radius-input)] bg-[var(--neutral-subtle)] border border-[var(--neutral-border-subtle)] text-[var(--neutral-muted)] group-hover:text-[var(--neutral-emphasis)] group-hover:border-[var(--neutral-border)] transition-all">
-                  <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 stroke-[1.75]" />
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-[var(--radius-input)] bg-[var(--neutral-subtle)] border border-[var(--neutral-border-subtle)] text-[var(--neutral-muted)] group-hover:text-[var(--neutral-emphasis)] group-hover:border-[var(--neutral-border)] transition-all">
+                  <AlertTriangle className="h-4.5 w-4.5 stroke-[1.75]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-xs sm:text-sm font-semibold text-[var(--neutral-emphasis)] leading-snug">
+                  <h3 className="text-xs sm:text-sm font-semibold text-[var(--neutral-emphasis)] leading-tight truncate">
                     {alert.title}
                   </h3>
-                  <p className="text-xs text-[var(--neutral-muted)] mt-1.5 leading-relaxed">
+                  <p className="text-xs text-[var(--neutral-muted)] mt-1 leading-snug line-clamp-1">
                     {alert.subtitle}
                   </p>
                 </div>
               </div>
-            </div>
-
-            {/* Bottom link prompt */}
-            <div className="mt-4 flex items-center justify-end text-xs font-medium">
-              <span className="inline-flex items-center gap-0.5 text-[var(--neutral-muted)] group-hover:text-[var(--neutral-emphasis)] group-hover:translate-x-0.5 transition-all">
-                <span>Ir</span>
-                <ChevronRight className="h-3.5 w-3.5 stroke-[1.5]" />
-              </span>
             </div>
           </div>
         ))}

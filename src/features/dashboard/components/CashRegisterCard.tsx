@@ -9,6 +9,7 @@ interface CashRegisterCardProps {
   lastClosingTime?: string
   initialStatus?: 'abierta' | 'cerrada'
   onToggleStatus?: (newStatus: 'abierta' | 'cerrada') => void
+  className?: string
 }
 
 export const CashRegisterCard: React.FC<CashRegisterCardProps> = ({
@@ -17,6 +18,7 @@ export const CashRegisterCard: React.FC<CashRegisterCardProps> = ({
   lastClosingTime = 'Ayer, 20:15 hs',
   initialStatus = 'abierta',
   onToggleStatus,
+  className = '',
 }) => {
   const { showToast } = useToast()
   const [status, setStatus] = useState<'abierta' | 'cerrada'>(initialStatus)
@@ -46,10 +48,10 @@ export const CashRegisterCard: React.FC<CashRegisterCardProps> = ({
   }
 
   return (
-    <section className="space-y-3">
+    <section className={`space-y-2 sm:space-y-2.5 flex flex-col ${className}`}>
       {/* Section Title & Status Badge */}
       <div className="flex items-center justify-between select-none">
-        <h2 className="text-base sm:text-lg font-semibold tracking-tight text-[var(--neutral-emphasis)] leading-snug">
+        <h2 className="text-sm sm:text-base font-semibold tracking-tight text-[var(--neutral-emphasis)] leading-snug">
           Control de caja
         </h2>
         <span
@@ -69,16 +71,16 @@ export const CashRegisterCard: React.FC<CashRegisterCardProps> = ({
       </div>
 
       {/* Card Container with Static Info & Action Button */}
-      <div className="rounded-[var(--radius-card)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] p-5 shadow-2xs transition-all space-y-4">
+      <div className="rounded-[var(--radius-card)] border border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] p-4 sm:p-5 shadow-2xs transition-all space-y-3 flex-1 flex flex-col justify-between">
         {/* Static Info Box */}
-        <div className="space-y-3 text-xs">
+        <div className="space-y-2.5 text-xs">
           {/* User in Charge */}
-          <div className="flex items-center gap-2.5 p-3 rounded-lg bg-[var(--neutral-subtle)]/60 border border-[var(--neutral-border-subtle)]">
+          <div className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-lg bg-[var(--neutral-subtle)]/60 border border-[var(--neutral-border-subtle)]">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[var(--neutral-subtle)] text-[var(--neutral-emphasis)]">
               <UserCheck className="h-4 w-4 stroke-[1.5]" />
             </div>
             <div className="min-w-0">
-              <span className="text-[11px] text-[var(--neutral-muted)] block leading-none mb-1">
+              <span className="text-[10px] text-[var(--neutral-muted)] block leading-none mb-1">
                 Responsable a cargo
               </span>
               <span className="font-semibold text-[var(--neutral-emphasis)] text-xs truncate block">
@@ -88,23 +90,23 @@ export const CashRegisterCard: React.FC<CashRegisterCardProps> = ({
           </div>
 
           {/* Last Opening / Closing Times */}
-          <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-[var(--neutral-subtle)]/40 border border-[var(--neutral-border-subtle)]">
+          <div className="grid grid-cols-2 gap-2.5 p-2.5 sm:p-3 rounded-lg bg-[var(--neutral-subtle)]/40 border border-[var(--neutral-border-subtle)]">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1 text-[11px] text-[var(--neutral-muted)]">
+              <div className="flex items-center gap-1 text-[10px] text-[var(--neutral-muted)]">
                 <Clock className="h-3 w-3 stroke-[1.5]" />
                 <span>Última apertura</span>
               </div>
-              <span className="font-mono font-medium text-[var(--neutral-emphasis)] text-xs block">
+              <span className="font-mono font-medium text-[var(--neutral-emphasis)] text-xs block truncate">
                 {openingTime}
               </span>
             </div>
 
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1 text-[11px] text-[var(--neutral-muted)]">
+              <div className="flex items-center gap-1 text-[10px] text-[var(--neutral-muted)]">
                 <Clock className="h-3 w-3 stroke-[1.5]" />
                 <span>Último cierre</span>
               </div>
-              <span className="font-mono font-medium text-[var(--neutral-emphasis)] text-xs block">
+              <span className="font-mono font-medium text-[var(--neutral-emphasis)] text-xs block truncate">
                 {closingTime}
               </span>
             </div>
@@ -112,11 +114,11 @@ export const CashRegisterCard: React.FC<CashRegisterCardProps> = ({
         </div>
 
         {/* Abrir / Cerrar Caja Action Button */}
-        <div className="pt-1">
+        <div>
           <button
             type="button"
             onClick={() => setIsConfirmOpen(true)}
-            className={`flex h-9 w-full items-center justify-center gap-2 rounded-[var(--radius-btn)] border text-xs font-medium transition-all cursor-pointer select-none active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--sidebar-ring)] ${
+            className={`flex h-8.5 sm:h-9 w-full items-center justify-center gap-2 rounded-[var(--radius-btn)] border text-xs font-medium transition-all cursor-pointer select-none active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--sidebar-ring)] ${
               isAbierta
                 ? 'border-[var(--neutral-border-subtle)] bg-[var(--neutral-card)] text-[var(--neutral-body)] hover:text-[var(--neutral-emphasis)] hover:bg-[var(--neutral-subtle)]'
                 : 'bg-[var(--neutral-brand)] text-white hover:bg-[var(--neutral-brand-hover)] border-transparent'
