@@ -1,28 +1,28 @@
-import React from 'react'
-import { PlusCircle, SquarePen } from 'lucide-react'
+import React from "react";
+import { PlusCircle, SquarePen } from "lucide-react";
 import {
   PageHeader,
   HeaderActionButton,
   NotificationBellButton,
-} from '@/components/ui/page-header'
-import { usePermissions } from '@/hooks/usePermissions'
+} from "@/components/ui/page-header";
+import { usePermissions } from "@/hooks/usePermissions";
 
 interface ProductsHeaderProps {
-  title?: string
-  subtitle?: string
-  onAddProductClick: () => void
-  onUpdatePricesClick: () => void
-  onNotificationsClick?: () => void
+  title?: string;
+  subtitle?: string;
+  onAddProductClick: () => void;
+  onUpdatePricesClick: () => void;
+  onNotificationsClick?: () => void;
 }
 
 export const ProductsHeader: React.FC<ProductsHeaderProps> = ({
-  title = 'Productos',
+  title = "Productos",
   subtitle,
   onAddProductClick,
   onUpdatePricesClick,
   onNotificationsClick,
 }) => {
-  const { products } = usePermissions()
+  const { products } = usePermissions();
 
   return (
     <PageHeader title={title} subtitle={subtitle}>
@@ -44,10 +44,7 @@ export const ProductsHeader: React.FC<ProductsHeaderProps> = ({
           onClick={onUpdatePricesClick}
         />
       )}
-      <NotificationBellButton
-        onClick={onNotificationsClick}
-      />
+      <NotificationBellButton onClick={onNotificationsClick} />
     </PageHeader>
-  )
-}
-
+  );
+};

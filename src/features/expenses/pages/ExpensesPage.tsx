@@ -145,7 +145,6 @@ export const ExpensesPage: React.FC = () => {
       {/* Header: Title, Añadir gasto Button & Notification Bell */}
       <ExpensesHeader
         onAddExpenseClick={() => setIsNewExpenseOpen(true)}
-        onNotificationsClick={() => showToast('Tienes 2 comprobantes por conciliar.')}
       />
 
       {/* KPI Overview Cards */}

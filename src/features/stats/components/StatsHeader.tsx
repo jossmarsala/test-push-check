@@ -1,10 +1,10 @@
-import React from 'react'
-import { FileDown } from 'lucide-react'
+import React from "react";
+import { FileDown } from "lucide-react";
 import {
   PageHeader,
   HeaderActionButton,
   NotificationBellButton,
-} from '@/components/ui/page-header'
+} from "@/components/ui/page-header";
 
 interface StatsHeaderProps {
   onExportReportClick: () => void;
@@ -28,5 +28,5 @@ export const StatsHeader: React.FC<StatsHeaderProps> = ({
         label="Ver notificaciones"
       />
     </PageHeader>
-  )
-}
+  );
+};

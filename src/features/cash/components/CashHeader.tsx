@@ -1,16 +1,16 @@
-import React from 'react'
-import { ArrowLeftRight, FileSpreadsheet } from 'lucide-react'
+import React from "react";
+import { ArrowLeftRight, FileSpreadsheet } from "lucide-react";
 import {
   PageHeader,
   HeaderActionButton,
   NotificationBellButton,
-} from '@/components/ui/page-header'
+} from "@/components/ui/page-header";
 
 interface CashHeaderProps {
-  onManualMovementClick?: () => void
-  onZReportClick?: () => void
-  onExportReportClick?: () => void
-  onNotificationsClick?: () => void
+  onManualMovementClick?: () => void;
+  onZReportClick?: () => void;
+  onExportReportClick?: () => void;
+  onNotificationsClick?: () => void;
 }
 
 export const CashHeader: React.FC<CashHeaderProps> = ({
@@ -19,9 +19,7 @@ export const CashHeader: React.FC<CashHeaderProps> = ({
   onNotificationsClick,
 }) => {
   return (
-    <PageHeader
-      title="Caja y movimientos"
-    >
+    <PageHeader title="Caja y movimientos">
       {onManualMovementClick && (
         <HeaderActionButton
           onClick={onManualMovementClick}
@@ -45,5 +43,5 @@ export const CashHeader: React.FC<CashHeaderProps> = ({
         label="Notificaciones de caja"
       />
     </PageHeader>
-  )
-}
+  );
+};

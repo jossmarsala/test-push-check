@@ -57,9 +57,7 @@ const INITIAL_PEDIDOS: Pedido[] = [
     contacto: '11 4455-8899',
     orfebre: 'Esteban Ruiz',
     notas: 'Ajuste de garra central y limpieza profunda.',
-    imagenes: [
-      'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&auto=format&fit=crop&q=80',
-    ],
+    imagenes: [],
   },
   {
     id: '2',
@@ -88,9 +86,7 @@ const INITIAL_PEDIDOS: Pedido[] = [
     contacto: '11 3322-1144',
     orfebre: 'Lucía Benítez',
     notas: 'Eslabón barbado 50cm con cierre mosquetón.',
-    imagenes: [
-      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=80',
-    ],
+    imagenes: [],
   },
   {
     id: '3',
@@ -112,9 +108,7 @@ const INITIAL_PEDIDOS: Pedido[] = [
     contacto: 'carlos.ruiz@joyeria.com',
     orfebre: 'Esteban Ruiz',
     notas: 'Pegar perla de cultivo derecha y cambiar perno de seguridad.',
-    imagenes: [
-      'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&auto=format&fit=crop&q=80',
-    ],
+    imagenes: [],
   },
   {
     id: '4',
@@ -143,9 +137,7 @@ const INITIAL_PEDIDOS: Pedido[] = [
     contacto: '11 5566-2233',
     orfebre: 'Pablo Pérez',
     notas: 'Engaste de circón suizo de 6mm en 4 grifas.',
-    imagenes: [
-      'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=500&auto=format&fit=crop&q=80',
-    ],
+    imagenes: [],
   },
   {
     id: '5',
@@ -175,9 +167,7 @@ const INITIAL_PEDIDOS: Pedido[] = [
     contacto: '11 7744-1122',
     orfebre: 'Lucía Benítez',
     notas: 'Soldadura de 2 eslabones y baño de rodio final.',
-    imagenes: [
-      'https://images.unsplash.com/photo-1611591475879-da60a3c792f0?w=500&auto=format&fit=crop&q=80',
-    ],
+    imagenes: [],
   },
   {
     id: '6',
@@ -200,9 +190,7 @@ const INITIAL_PEDIDOS: Pedido[] = [
     esGarantia: true,
     pedidoOriginalId: '1',
     motivoGarantia: 'Se desprendió la piedra engarzada colocada en la reparación previa.',
-    imagenes: [
-      'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&auto=format&fit=crop&q=80',
-    ],
+    imagenes: [],
   },
 ]
 
@@ -442,7 +430,6 @@ export const WorkshopOrdersPage: React.FC = () => {
       {/* Header: Title, "Registrar nuevo" & Notifications */}
       <PedidosHeader
         onRegisterNewClick={() => setIsNewOrderOpen(true)}
-        onNotificationsClick={() => showToast('Tienes 3 avisos de taller pendientes.')}
       />
 
       {/* Filter Tabs & Search Bar & View Mode Toggle */}

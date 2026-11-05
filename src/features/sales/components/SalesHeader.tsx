@@ -1,14 +1,14 @@
-import React from 'react'
-import { PlusCircle } from 'lucide-react'
+import React from "react";
+import { PlusCircle } from "lucide-react";
 import {
   PageHeader,
   HeaderActionButton,
   NotificationBellButton,
-} from '@/components/ui/page-header'
+} from "@/components/ui/page-header";
 
 interface SalesHeaderProps {
-  onNewSaleClick?: () => void
-  onNotificationsClick?: () => void
+  onNewSaleClick?: () => void;
+  onNotificationsClick?: () => void;
 }
 
 export const SalesHeader: React.FC<SalesHeaderProps> = ({
@@ -16,9 +16,7 @@ export const SalesHeader: React.FC<SalesHeaderProps> = ({
   onNotificationsClick,
 }) => {
   return (
-    <PageHeader
-      title="Ventas"
-    >
+    <PageHeader title="Ventas">
       {onNewSaleClick && (
         <HeaderActionButton
           onClick={onNewSaleClick}
@@ -34,5 +32,5 @@ export const SalesHeader: React.FC<SalesHeaderProps> = ({
         label="Ver notificaciones de ventas"
       />
     </PageHeader>
-  )
-}
+  );
+};

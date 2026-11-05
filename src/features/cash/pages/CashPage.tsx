@@ -129,7 +129,6 @@ export const CashPage: React.FC = () => {
       <CashHeader
         onManualMovementClick={() => setIsManualMovementOpen(true)}
         onZReportClick={() => setIsZReportOpen(true)}
-        onNotificationsClick={() => showToast('Arqueo de caja al día sin novedades.')}
       />
 
       {/* Period Selector Tabs: Hoy, Ayer, Antes de ayer */}

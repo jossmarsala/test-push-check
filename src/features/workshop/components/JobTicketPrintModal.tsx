@@ -1,18 +1,18 @@
-import React from 'react'
+import React from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Printer, QrCode, Tag, Weight, Sparkles } from 'lucide-react'
-import type { Pedido } from '../types/workshop.types'
+} from "@/components/ui/dialog";
+import { Printer, QrCode, Tag, Weight, Sparkles } from "lucide-react";
+import type { Pedido } from "../types/workshop.types";
 
 interface JobTicketPrintModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  pedido: Pedido | null
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  pedido: Pedido | null;
 }
 
 export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
@@ -20,13 +20,16 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
   onOpenChange,
   pedido,
 }) => {
-  if (!pedido) return null
+  if (!pedido) return null;
 
   const handlePrint = () => {
-    window.print()
-  }
+    window.print();
+  };
 
-  const saldoPendiente = Math.max(0, (pedido.pagoTotal || 0) - (pedido.señaAdelanto || 0))
+  const saldoPendiente = Math.max(
+    0,
+    (pedido.pagoTotal || 0) - (pedido.señaAdelanto || 0),
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -37,11 +40,12 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
               Recibo de Taller / Sobre de Pieza
             </DialogTitle>
             <span className="text-[10px] font-mono font-semibold bg-[var(--neutral-subtle)] px-2 py-0.5 rounded text-[var(--neutral-muted)]">
-              #PED-{pedido.id.padStart(4, '0')}
+              #PED-{pedido.id.padStart(4, "0")}
             </span>
           </div>
           <DialogDescription className="text-xs text-[var(--neutral-muted)] mt-1">
-            Etiqueta imprimible para adjuntar a la bolsita hermética en el banco de trabajo.
+            Etiqueta imprimible para adjuntar a la bolsita hermética en el banco
+            de trabajo.
           </DialogDescription>
         </DialogHeader>
 
@@ -53,7 +57,9 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
               <span className="text-[11px] font-bold tracking-wider uppercase text-[var(--neutral-emphasis)] block">
                 EQUA JOYAS & TALLER
               </span>
-              <span className="text-[10px] text-[var(--neutral-muted)]">Control de Banco de Trabajo</span>
+              <span className="text-[10px] text-[var(--neutral-muted)]">
+                Control de Banco de Trabajo
+              </span>
             </div>
             <div className="h-10 w-10 border border-[var(--neutral-border)] bg-white dark:bg-black rounded flex items-center justify-center text-[var(--neutral-emphasis)]">
               <QrCode className="h-7 w-7 stroke-[1.5]" />
@@ -62,9 +68,13 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
 
           {pedido.esGarantia && (
             <div className="flex items-center justify-between text-[11px] py-1 px-2 rounded bg-[var(--neutral-subtle)] border border-[var(--neutral-border-subtle)] text-[var(--neutral-muted)]">
-              <span className="font-medium text-[var(--neutral-emphasis)]">Garantía sin cargo</span>
+              <span className="font-medium text-[var(--neutral-emphasis)]">
+                Garantía sin cargo
+              </span>
               {pedido.pedidoOriginalId && (
-                <span className="font-mono text-[10px]">Ref #{pedido.pedidoOriginalId.padStart(4, '0')}</span>
+                <span className="font-mono text-[10px]">
+                  Ref #{pedido.pedidoOriginalId.padStart(4, "0")}
+                </span>
               )}
             </div>
           )}
@@ -79,7 +89,7 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
                 {pedido.cliente}
               </span>
               <span className="text-[10px] text-[var(--neutral-muted)] font-mono">
-                {pedido.contacto || 'Sin contacto'}
+                {pedido.contacto || "Sin contacto"}
               </span>
             </div>
             <div>
@@ -87,10 +97,10 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
                 Entrega estimada:
               </span>
               <span className="font-semibold text-rose-600 dark:text-rose-400 font-mono block">
-                {pedido.fechaEntrega || 'A coordinar'}
+                {pedido.fechaEntrega || "A coordinar"}
               </span>
               <span className="text-[10px] text-[var(--neutral-muted)]">
-                Orfebre: {pedido.orfebre || 'Taller central'}
+                Orfebre: {pedido.orfebre || "Taller central"}
               </span>
             </div>
           </div>
@@ -118,7 +128,7 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
             <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--neutral-emphasis)]">
               <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
                 <Sparkles className="h-3 w-3" />
-                Metal: {pedido.metal || 'Plata 925'}
+                Metal: {pedido.metal || "Plata 925"}
               </span>
               <span className="flex items-center gap-1 text-[var(--neutral-muted)]">
                 <Weight className="h-3 w-3" />
@@ -127,21 +137,33 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
             </div>
             <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] pt-1 border-t border-[var(--neutral-border-subtle)]">
               <div className="bg-[var(--neutral-subtle)]/60 p-1.5 rounded">
-                <span className="text-[var(--neutral-muted)] block">Peso Inicial</span>
+                <span className="text-[var(--neutral-muted)] block">
+                  Peso Inicial
+                </span>
                 <span className="font-mono font-bold text-[var(--neutral-emphasis)]">
-                  {pedido.pesoInicialGramos ? `${pedido.pesoInicialGramos}g` : '4.20g'}
+                  {pedido.pesoInicialGramos
+                    ? `${pedido.pesoInicialGramos}g`
+                    : "4.20g"}
                 </span>
               </div>
               <div className="bg-[var(--neutral-subtle)]/60 p-1.5 rounded">
-                <span className="text-[var(--neutral-muted)] block">Merma Est.</span>
+                <span className="text-[var(--neutral-muted)] block">
+                  Merma Est.
+                </span>
                 <span className="font-mono font-bold text-amber-600 dark:text-amber-400">
-                  {pedido.mermaEstimadaGramos ? `${pedido.mermaEstimadaGramos}g` : '0.35g'}
+                  {pedido.mermaEstimadaGramos
+                    ? `${pedido.mermaEstimadaGramos}g`
+                    : "0.35g"}
                 </span>
               </div>
               <div className="bg-[var(--neutral-subtle)]/60 p-1.5 rounded">
-                <span className="text-[var(--neutral-muted)] block">Peso Final</span>
+                <span className="text-[var(--neutral-muted)] block">
+                  Peso Final
+                </span>
                 <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                  {pedido.pesoFinalGramos ? `${pedido.pesoFinalGramos}g` : '3.85g'}
+                  {pedido.pesoFinalGramos
+                    ? `${pedido.pesoFinalGramos}g`
+                    : "3.85g"}
                 </span>
               </div>
             </div>
@@ -151,16 +173,22 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
           <div className="flex items-center justify-between text-xs pt-1 border-t border-[var(--neutral-border-subtle)] font-mono">
             <div>
               <span className="text-[10px] text-[var(--neutral-muted)] block">
-                {pedido.esGarantia ? 'Condición:' : 'Seña recibida:'}
+                {pedido.esGarantia ? "Condición:" : "Seña recibida:"}
               </span>
               <span className="font-semibold text-[var(--neutral-emphasis)]">
-                {pedido.esGarantia ? 'Garantía' : `$${(pedido.señaAdelanto || 0).toLocaleString('es-AR')}`}
+                {pedido.esGarantia
+                  ? "Garantía"
+                  : `$${(pedido.señaAdelanto || 0).toLocaleString("es-AR")}`}
               </span>
             </div>
             <div className="text-right">
-              <span className="text-[10px] text-[var(--neutral-muted)] block">Saldo al retirar:</span>
+              <span className="text-[10px] text-[var(--neutral-muted)] block">
+                Saldo al retirar:
+              </span>
               <span className="font-bold text-sm text-[var(--neutral-emphasis)]">
-                {pedido.esGarantia ? '$0' : `$${saldoPendiente.toLocaleString('es-AR')}`}
+                {pedido.esGarantia
+                  ? "$0"
+                  : `$${saldoPendiente.toLocaleString("es-AR")}`}
               </span>
             </div>
           </div>
@@ -186,5 +214,5 @@ export const JobTicketPrintModal: React.FC<JobTicketPrintModalProps> = ({
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

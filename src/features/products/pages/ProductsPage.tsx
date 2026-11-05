@@ -316,9 +316,6 @@ export const ProductsPage: React.FC = () => {
           setIsAddOpen(true);
         }}
         onUpdatePricesClick={() => setIsUpdatePricesOpen(true)}
-        onNotificationsClick={() =>
-          showToast("Tienes 2 alertas de stock bajo pendientes.")
-        }
       />
 
       {/* Filter Bar: Search, Category Pills & Segmented Grid/List toggle */}
