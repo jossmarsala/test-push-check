@@ -1,9 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState, useCallback } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase/client'
+import type { Database } from '@/lib/supabase/database.types'
 import type { UserProfile, UserRole } from '@/types/auth.types'
 
-interface AuthContextType {
+type ProfileRow = Database['public']['Tables']['profiles']['Row']
+
+export interface AuthContextType {
   user: User | null
   profile: UserProfile | null
   role: UserRole
@@ -14,14 +17,14 @@ interface AuthContextType {
   setDevRole: (role: UserRole) => void
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 const DEFAULT_DEV_PROFILE: UserProfile = {
   id: 'dev-admin-id',
-  email: 'admin@equabms.com',
+  email: 'juana.perez@aguamarina.com',
   role: 'admin',
-  first_name: 'Admin',
-  last_name: 'Store Manager',
+  first_name: 'Juana',
+  last_name: 'Pérez',
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -30,6 +33,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(DEFAULT_DEV_PROFILE)
   const [role, setRole] = useState<UserRole>('admin')
   const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const fetchUserProfile = useCallback(async (userId: string, email: string) => {
+    try {
+      const response = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      const data = response.data as ProfileRow | null
+
+      if (response.error || !data) {
+        const fallback: UserProfile = {
+          id: userId,
+          email,
+          role: 'admin',
+        }
+        setProfile(fallback)
+        setRole('admin')
+        return
+      }
+
+      const userProfile: UserProfile = {
+        id: data.id,
+        email: data.email,
+        role: data.role as UserRole,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        avatar_url: data.avatar_url,
+      }
+
+      setProfile(userProfile)
+      setRole(userProfile.role)
+    } catch (err) {
+      console.warn('[Auth] Error fetching profile, using fallback:', err)
+    }
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -44,7 +84,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(session.user)
           await fetchUserProfile(session.user.id, session.user.email ?? '')
         } else {
-          // In local dev without live Supabase session, keep default dev admin profile active
           setProfile(DEFAULT_DEV_PROFILE)
           setRole(DEFAULT_DEV_PROFILE.role)
         }
@@ -74,43 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isMounted = false
       authListener?.subscription.unsubscribe()
     }
-  }, [])
-
-  async function fetchUserProfile(userId: string, email: string) {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
-
-      if (error || !data) {
-        // Fallback profile if table not yet populated
-        const fallback: UserProfile = {
-          id: userId,
-          email,
-          role: 'admin',
-        }
-        setProfile(fallback)
-        setRole('admin')
-        return
-      }
-
-      const userProfile: UserProfile = {
-        id: data.id,
-        email: data.email,
-        role: data.role as UserRole,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        avatar_url: data.avatar_url,
-      }
-
-      setProfile(userProfile)
-      setRole(userProfile.role)
-    } catch (err) {
-      console.warn('[Auth] Error fetching profile, using fallback:', err)
-    }
-  }
+  }, [fetchUserProfile])
 
   const signInWithPassword = async (email: string, password: string) => {
     setIsLoading(true)
@@ -147,12 +150,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
 }

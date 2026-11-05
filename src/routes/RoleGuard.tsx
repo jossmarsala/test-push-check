@@ -2,6 +2,7 @@ import React from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import type { UserRole } from '@/types/auth.types'
+import { getDefaultRouteForRole } from '@/config/navigation.config'
 
 interface RoleGuardProps {
   allowedRoles: UserRole[]
@@ -10,7 +11,7 @@ interface RoleGuardProps {
 
 export const RoleGuard: React.FC<RoleGuardProps> = ({
   allowedRoles,
-  fallbackPath = '/unauthorized',
+  fallbackPath,
 }) => {
   const { role, isLoading } = useAuth()
 
@@ -23,8 +24,10 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   }
 
   if (!role || !allowedRoles.includes(role)) {
-    return <Navigate to={fallbackPath} replace />
+    const target = fallbackPath || getDefaultRouteForRole(role)
+    return <Navigate to={target} replace />
   }
 
   return <Outlet />
 }
+

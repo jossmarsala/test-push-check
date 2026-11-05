@@ -23,3 +23,4 @@ export const AuthGuard: React.FC = () => {
 
   return <Outlet />
 }
+
