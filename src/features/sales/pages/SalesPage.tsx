@@ -1,220 +1,255 @@
-import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { ShoppingCart, CreditCard, Banknote, ArrowRight, Trash2, Plus, Search } from 'lucide-react'
-
-interface CartItem {
-  id: string
-  name: string
-  sku: string
-  price: number
-  quantity: number
-}
-
-const mockQuickCatalog = [
-  { id: 'p1', name: 'Solitaire Gold Ring 18k', sku: 'RNG-18K-01', price: 340.0, stock: 5 },
-  { id: 'p2', name: 'Silver Huggie Earrings 925', sku: 'EAR-925-08', price: 55.0, stock: 12 },
-  { id: 'p3', name: 'Gold Rope Chain 45cm 18k', sku: 'CHN-18K-14', price: 420.0, stock: 3 },
-  { id: 'p4', name: 'Diamond Tennis Bracelet', sku: 'BRC-DIA-02', price: 980.0, stock: 2 },
-]
+import React, { useState, useMemo, useEffect } from 'react'
+import { useSearchParams, useLocation } from 'react-router-dom'
+import { useToast } from '@/context/ToastContext'
+import { SalesHeader } from '../components/SalesHeader'
+import { SalesKpiRow } from '../components/SalesKpiRow'
+import { SalesFilters } from '../components/SalesFilters'
+import { SalesTable } from '../components/SalesTable'
+import { NewSaleDialog } from '../components/NewSaleDialog'
+import { SaleDetailDialog } from '../components/SaleDetailDialog'
+import { DeleteSaleDialog } from '../components/DeleteSaleDialog'
+import { ProductExchangeDialog } from '../components/ProductExchangeDialog'
+import { INITIAL_SALES, INITIAL_SALES_KPIS } from '../data/mockSales'
+import type {
+  SaleRecord,
+  NewSaleFormData,
+  SalesKpiData,
+  RegistrarCambioFormData,
+  SaleExchangeRecord,
+} from '../types/sales.types'
 
 export const SalesPage: React.FC = () => {
-  const [cart, setCart] = useState<CartItem[]>([
-    { id: 'p1', name: 'Solitaire Gold Ring 18k', sku: 'RNG-18K-01', price: 340.0, quantity: 1 },
-  ])
-  const [customerName, setCustomerName] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'transfer'>('cash')
+  const [sales, setSales] = useState<SaleRecord[]>(INITIAL_SALES)
+  const [kpis, setKpis] = useState<SalesKpiData>(INITIAL_SALES_KPIS)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activePaymentFilter, setActivePaymentFilter] = useState('all')
 
-  const addToCart = (product: typeof mockQuickCatalog[0]) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id)
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        )
+  // Modals state
+  const { showToast } = useToast()
+  const [isNewSaleOpen, setIsNewSaleOpen] = useState(false)
+  const [selectedSaleForDetail, setSelectedSaleForDetail] = useState<SaleRecord | null>(null)
+  const [saleToDelete, setSaleToDelete] = useState<SaleRecord | null>(null)
+  const [saleForExchange, setSaleForExchange] = useState<SaleRecord | null>(null)
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (searchParams.get('action') === 'new' || searchParams.get('nuevo') === 'true' || location.state?.openNewSale) {
+      setIsNewSaleOpen(true)
+      if (searchParams.has('action') || searchParams.has('nuevo')) {
+        const newParams = new URLSearchParams(searchParams)
+        newParams.delete('action')
+        newParams.delete('nuevo')
+        setSearchParams(newParams, { replace: true })
       }
-      return [...prev, { ...product, quantity: 1 }]
+    }
+  }, [searchParams, location.state, setSearchParams])
+
+  // Filter sales based on search and payment method
+  const filteredSales = useMemo(() => {
+    return sales.filter((item) => {
+      // Payment method filter
+      if (activePaymentFilter !== 'all' && item.pago !== activePaymentFilter) {
+        return false
+      }
+
+      // Search query (cliente, fecha, producto, ticketNumber)
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim()
+        const matchesClient = item.cliente.toLowerCase().includes(query)
+        const matchesDate = item.fecha.toLowerCase().includes(query)
+        const matchesFullDate = item.fechaCompleta.toLowerCase().includes(query)
+        const matchesProduct = item.productosTexto.toLowerCase().includes(query)
+        const matchesTicket = item.ticketNumber.toLowerCase().includes(query)
+
+        return matchesClient || matchesDate || matchesFullDate || matchesProduct || matchesTicket
+      }
+
+      return true
     })
+  }, [sales, activePaymentFilter, searchQuery])
+
+  // Register a new sale
+  const handleCreateSale = (formData: NewSaleFormData) => {
+    const rawTotal = formData.items.reduce(
+      (sum, item) => sum + item.unitPrice * item.quantity,
+      0
+    )
+    const discountAmount = formData.discountPercent
+      ? Math.round((rawTotal * formData.discountPercent) / 100)
+      : 0
+    const totalAmount = Math.max(0, rawTotal - discountAmount)
+    const nextTicketNumber = `TK-${(816 + sales.length + 1).toString().padStart(5, '0')}`
+
+    const newSale: SaleRecord = {
+      id: `s-${Date.now()}`,
+      ticketNumber: nextTicketNumber,
+      fecha: new Date().toLocaleDateString('es-AR', { day: 'numeric', month: 'short' }),
+      fechaCompleta: new Date().toLocaleDateString('es-AR'),
+      hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+      productosTexto: formData.items.map((i) => i.name).join(', '),
+      items: formData.items,
+      total: totalAmount,
+      cliente: formData.cliente,
+      clienteContacto: formData.clienteContacto,
+      estado: 'completado',
+      pago: formData.pago,
+      splitPayments: formData.splitPayments,
+      discountAmount: discountAmount > 0 ? discountAmount : undefined,
+      discountCode: formData.discountCode,
+      ringSize: formData.ringSize,
+      vendedor: 'Juana Pérez',
+      notas: formData.notas,
+    }
+
+    setSales((prev) => [newSale, ...prev])
+
+    // Update KPIs dynamically
+    setKpis((prev) => ({
+      ...prev,
+      ventasEsteMes: prev.ventasEsteMes + 1,
+      ingresosTotales: prev.ingresosTotales + totalAmount,
+    }))
+
+    showToast(`Venta ${nextTicketNumber} registrada con éxito por $${totalAmount.toLocaleString('es-AR')}.`)
   }
 
-  const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== id))
+  // Confirm product exchange (Enforcing max 1 exchange policy)
+  const handleConfirmExchange = (data: RegistrarCambioFormData) => {
+    const todayShort = new Date().toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })
+    const todayFull = new Date().toLocaleDateString('es-AR')
+    const nowTime = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+
+    const exchangeRecord: SaleExchangeRecord = {
+      id: `ex-${Date.now()}`,
+      fecha: todayShort,
+      fechaCompleta: todayFull,
+      hora: nowTime,
+      productoDevuelto: data.productoDevuelto,
+      valorDevuelto: data.valorDevuelto,
+      productoNuevo: data.productoNuevo,
+      valorNuevo: data.valorNuevo,
+      diferenciaMonto: data.diferenciaMonto,
+      diferenciaMetodoPago: data.diferenciaMetodoPago,
+      saldoAFavorEmitido: data.saldoAFavorEmitido,
+      motivo: data.motivo,
+      vendedor: 'Juana Pérez',
+      notas: data.notas,
+    }
+
+    setSales((prev) =>
+      prev.map((s) => {
+        if (s.id !== data.saleId) return s
+
+        const updatedTexto = `${s.productosTexto} (Cambiado: ${data.productoDevuelto} por ${data.productoNuevo})`
+        const currentHistory = s.cambioHistorico || []
+
+        return {
+          ...s,
+          cambiosRealizados: (s.cambiosRealizados || 0) + 1,
+          cambioHistorico: [exchangeRecord, ...currentHistory],
+          productosTexto: updatedTexto,
+          total: data.diferenciaMonto > 0 ? s.total + data.diferenciaMonto : s.total,
+        }
+      })
+    )
+
+    if (data.diferenciaMonto > 0) {
+      setKpis((prev) => ({
+        ...prev,
+        ingresosTotales: prev.ingresosTotales + data.diferenciaMonto,
+      }))
+    }
+
+    const extraDiffMsg =
+      data.diferenciaMonto > 0
+        ? ` Diferencia: +$${data.diferenciaMonto.toLocaleString('es-AR')}.`
+        : data.saldoAFavorEmitido
+        ? ` Saldo a favor: $${data.saldoAFavorEmitido.toLocaleString('es-AR')}.`
+        : ''
+
+    showToast(`Cambio de producto registrado para el ticket #${data.saleId}.${extraDiffMsg}`)
   }
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const tax = subtotal * 0.1 // 10% VAT/Tax
-  const total = subtotal + tax
+  // Void/Delete a sale
+  const handleDeleteSale = (saleId: string) => {
+    const saleToRemove = sales.find((s) => s.id === saleId)
+    setSales((prev) => prev.filter((s) => s.id !== saleId))
+
+    if (saleToRemove) {
+      setKpis((prev) => ({
+        ...prev,
+        ventasEsteMes: Math.max(0, prev.ventasEsteMes - 1),
+        ingresosTotales: Math.max(0, prev.ingresosTotales - saleToRemove.total),
+      }))
+    }
+
+    showToast('Venta anulada correctamente.')
+  }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Point of Sale (Ventas)</h2>
-        <p className="text-sm text-muted-foreground">
-          Register in-store sales, produce receipts, and handle payments.
-        </p>
-      </div>
+    <div className="w-full max-w-[1200px] mx-auto space-y-6 animate-fade-in">
+      {/* Header: Title, "Registrar venta" & Notification Bell */}
+      <SalesHeader
+        onNewSaleClick={() => setIsNewSaleOpen(true)}
+        onNotificationsClick={() => showToast('Tienes 1 aviso de facturación pendiente.')}
+      />
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left Column: Catalog Selection */}
-        <div className="space-y-4 lg:col-span-2">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base">Fast Product Lookup</CardTitle>
-                  <CardDescription>Click to add directly to current sale ticket</CardDescription>
-                </div>
-                <div className="relative w-48 sm:w-64">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Scan barcode or type SKU..." className="pl-8" />
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {mockQuickCatalog.map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => addToCart(item)}
-                    className="flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors hover:border-primary hover:bg-muted/50"
-                  >
-                    <div>
-                      <p className="font-medium text-sm">{item.name}</p>
-                      <p className="font-mono text-xs text-muted-foreground">{item.sku}</p>
-                      <p className="text-xs text-muted-foreground mt-1">Stock: {item.stock}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-sm">${item.price.toFixed(2)}</p>
-                      <Button size="icon" variant="ghost" className="h-7 w-7 mt-1">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      {/* KPI Cards Row */}
+      <SalesKpiRow
+        kpis={kpis}
+      />
 
-        {/* Right Column: Checkout Ticket */}
-        <div>
-          <Card className="sticky top-6">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ShoppingCart className="h-4 w-4" />
-                Current Ticket
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Customer Name */}
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Customer (Optional)</label>
-                <Input
-                  placeholder="e.g. John Doe / Walk-in"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
+      {/* Filters: Search & Payment Method */}
+      <SalesFilters
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        activePaymentFilter={activePaymentFilter}
+        onPaymentFilterChange={setActivePaymentFilter}
+      />
 
-              <Separator />
+      {/* Sales History Table */}
+      <SalesTable
+        sales={filteredSales}
+        onViewSale={(sale) => setSelectedSaleForDetail(sale)}
+        onDeleteSale={(sale) => setSaleToDelete(sale)}
+        onExchangeSale={(sale) => setSaleForExchange(sale)}
+        onResetFilters={() => {
+          setSearchQuery('')
+          setActivePaymentFilter('all')
+        }}
+      />
 
-              {/* Items List */}
-              <div className="max-h-60 space-y-2 overflow-y-auto">
-                {cart.length === 0 ? (
-                  <p className="py-6 text-center text-xs text-muted-foreground">Ticket is empty</p>
-                ) : (
-                  cart.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between text-sm">
-                      <div className="max-w-[170px]">
-                        <p className="truncate font-medium">{item.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.quantity} x ${item.price.toFixed(2)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-semibold">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </span>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                          onClick={() => removeFromCart(item.id)}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+      {/* Interactive Modals */}
+      <NewSaleDialog
+        open={isNewSaleOpen}
+        onOpenChange={setIsNewSaleOpen}
+        onSubmit={handleCreateSale}
+      />
 
-              <Separator />
+      <SaleDetailDialog
+        open={!!selectedSaleForDetail}
+        onOpenChange={(open) => !open && setSelectedSaleForDetail(null)}
+        sale={selectedSaleForDetail}
+        onExchangeSale={(sale) => setSaleForExchange(sale)}
+      />
 
-              {/* Payment Method Selector */}
-              <div>
-                <label className="text-xs font-medium text-muted-foreground block mb-2">Payment Method</label>
-                <div className="grid grid-cols-3 gap-2">
-                  <Button
-                    type="button"
-                    variant={paymentMethod === 'cash' ? 'default' : 'outline'}
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => setPaymentMethod('cash')}
-                  >
-                    <Banknote className="mr-1 h-3 w-3" /> Cash
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={paymentMethod === 'card' ? 'default' : 'outline'}
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => setPaymentMethod('card')}
-                  >
-                    <CreditCard className="mr-1 h-3 w-3" /> Card
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={paymentMethod === 'transfer' ? 'default' : 'outline'}
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => setPaymentMethod('transfer')}
-                  >
-                    Transfer
-                  </Button>
-                </div>
-              </div>
+      <ProductExchangeDialog
+        open={!!saleForExchange}
+        onOpenChange={(open) => !open && setSaleForExchange(null)}
+        sale={saleForExchange}
+        onSubmitExchange={handleConfirmExchange}
+      />
 
-              {/* Totals */}
-              <div className="space-y-1 rounded-lg bg-muted/50 p-3 text-sm">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Tax (10%)</span>
-                  <span>${tax.toFixed(2)}</span>
-                </div>
-                <Separator className="my-1" />
-                <div className="flex justify-between font-bold text-base">
-                  <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
-                </div>
-              </div>
-
-              {/* Complete Sale Button */}
-              <Button className="w-full" size="lg" disabled={cart.length === 0}>
-                Charge ${total.toFixed(2)}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <DeleteSaleDialog
+        open={!!saleToDelete}
+        onOpenChange={(open) => !open && setSaleToDelete(null)}
+        sale={saleToDelete}
+        onConfirmDelete={handleDeleteSale}
+      />
     </div>
   )
 }
+
+export default SalesPage
